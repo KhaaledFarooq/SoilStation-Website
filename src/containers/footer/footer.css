@@ -1,0 +1,41 @@
+.App {
+  font-family: sans-serif;
+  min-height: 100vh;
+}
+
+footer {
+  /* position: absolute; */
+  background-color: gray;
+  width: 100%;
+  padding: 8px;
+  text-align: center;
+  box-shadow: 0 16px 70px -8px rgb(198, 132, 132);
+  border-radius: 100px 10px 0 0;
+  transition: background 0.3s linear;
+}
+
+.logo_name {
+  font-size: 1.8rem;
+}
+
+.logo_name {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: black;
+}
+
+.n_list {
+  flex: 10;
+}
+
+.n_list > ul {
+  display: flex;
+  gap: 2rem;
+  margin-right: 4rem;
+}
+
+.n_list > ul > li:hover {
+  cursor: pointer;
+  color: burlywood;
+  /* color: var(--green); */
+}
