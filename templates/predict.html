@@ -139,13 +139,7 @@
     
     .vertical-center {
         position: right;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    .center {
-        margin-left: auto;
-        margin-right: auto;
+        margin-left: 45%;
     }
     
     table {
@@ -185,11 +179,6 @@
     .styled-table tbody tr:last-of-type {
         border-bottom: 2px solid #b45736;
     }
-    
-    .styled-table tbody tr.active-row {
-        font-weight: bold;
-        color: #b45736;
-    }
 </style>
 
 <body>
@@ -203,7 +192,7 @@
             <a href="AboutUs.html">About Us</a>
             <a href="login.html">login</a>
             <a href="contact.html">contact</a>
-    
+
             <a href="javascript:void(0);" class="icon" onclick="myFunction()">
                 <i class="fa fa-bars"></i>
             </a>
@@ -258,7 +247,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr class="active-row">
+            <tr>
                 <td>Black Soil</td>
                 <td>{{blackPercentage}}</td>
             </tr>
@@ -267,7 +256,7 @@
                 <td>Laterite Soil</td>
                 <td>{{lateralPercentage}}</td>
             </tr>
-            <tr class="active-row">
+            <tr>
                 <td>Peat Soil</td>
                 <td>{{peatPercentage}}</td>
             </tr>
