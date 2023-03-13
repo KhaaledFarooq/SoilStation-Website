@@ -5,9 +5,15 @@ from keras.utils import load_img, img_to_array
 from keras.models import load_model
 import numpy as np
 import os
+import base64
+from io import BytesIO
+from PIL import Image
 
 #intializing the flask app
 app  = Flask('Soil_Identifier',template_folder=r'C:\Users\dell\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\dell\Documents\SoilStation-Website\static')
+
+
+soilID = 0
 
 #connecting to the database
 mydb = mysql.connector.connect(
@@ -36,6 +42,9 @@ def predict(file):
 	#predicting
     preds = model.predict(image) #return array with probabilities for each class
     predsLabel = np.argmax(preds) #return the class with highest probability
+    global soilID 
+    soilID = int(predsLabel)+1
+    #print(soilID)
     
 	#Converting probabilities in to percentages
     num0 = (preds[0][0])*100 #black percentage
@@ -160,6 +169,26 @@ def signup_post():
 @app.route("/contact.html", methods=['GET', 'POST'])
 def contactUs():
 	return render_template("contact.html")
+
+
+#Setting plant recomendation page app route
+@app.route("/plants.html", methods=['GET', 'POST'])
+def plantRecommend():
+    mycursor = mydb.cursor()
+    mycursor.execute('SELECT Plant_Name, Image, Description, Treatment_Methods FROM plants WHERE Soil_ID = %s',(soilID,))
+    plants = mycursor.fetchall()
+    
+    # Convert BLOB images to PNG format and base64-encoded data URIs
+    new_plants = []
+    for plant in plants:
+        img = Image.open(BytesIO(plant[1]))
+        buffer = BytesIO()
+        img.save(buffer, format='PNG')
+        img_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        img_data_uri = f"data:image/png;base64,{img_str}"
+        new_plants.append((plant[0], img_data_uri, plant[2], plant[3]))
+    
+    return render_template('plants.html', plants=new_plants)
 
 #Running the app
 if __name__ =='__main__':
