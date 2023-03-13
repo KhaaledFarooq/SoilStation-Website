@@ -6,13 +6,13 @@ import numpy as np
 import os
 
 #intializing the flask app
-app  = Flask('Soil_Identifier',template_folder=r'C:\Users\dell\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\dell\Documents\SoilStation-Website\static')
+app  = Flask('Soil_Identifier',template_folder=r'C:\Users\hp\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\hp\Documents\SoilStation-Website\static')
 
 #Class of soil
 classes = ["Black Soil","Laterite Soil","Peat Soil","Yellow Soil"]
 
 #Loading trained model
-model = load_model(r"C:\Users\dell\Documents\SoilStation-Website\SoilTypeIdentify.h5")
+model = load_model(r"C:\Users\hp\Documents\SoilStation-Website\SoilTypeIdentify.h5")
 
 
 #Function to predict the soil type
@@ -74,7 +74,7 @@ def get_output():
 		img = request.files["my_image"]
 
 		#Set path to save image
-		img_path1 = r"C:\Users\dell\Documents\SoilStation-Website\static\img"
+		img_path1 = r"C:\Users\hp\Documents\SoilStation-Website\static\img"
 		img_path2 = img.filename
 		stat_dir = r"\static\img" #Flask static directory
 
@@ -113,6 +113,12 @@ def logIn():
 @app.route("/signup.html", methods=['GET', 'POST'])
 def signIn():
 	return render_template("signup.html")
+
+#Setting signup page app routw
+@app.route("/contact.html", methods=['GET', 'POST'])
+def contactUs():
+	return render_template("contact.html")
+
 
 #Running the app
 if __name__ =='__main__':

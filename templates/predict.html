@@ -194,15 +194,16 @@
 
 <body>
     <header>
-        <!-- <a href="home.html"><img src="static\photos\logo.png" width="250px" height="65px" /></a> -->
+        <a href="home.html"><img src="static\photos\logo.png" width="250px" height="65px" /></a>
 
         <!--navigation bar-->
         <div class="nav" id="navId">
+            <a href="home.html">Home</a>
             <a href="predict.html">Predict</a>
-            <a href="Recommendation.html">Recommendation</a>
             <a href="AboutUs.html">About Us</a>
             <a href="login.html">login</a>
-            <a href="signup.html">signup</a>
+            <a href="contact.html">contact</a>
+    
             <a href="javascript:void(0);" class="icon" onclick="myFunction()">
                 <i class="fa fa-bars"></i>
             </a>
@@ -257,7 +258,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
+            <tr class="active-row">
                 <td>Black Soil</td>
                 <td>{{blackPercentage}}</td>
             </tr>
@@ -266,7 +267,7 @@
                 <td>Laterite Soil</td>
                 <td>{{lateralPercentage}}</td>
             </tr>
-            <tr>
+            <tr class="active-row">
                 <td>Peat Soil</td>
                 <td>{{peatPercentage}}</td>
             </tr>

@@ -1,216 +1,327 @@
 <!DOCTYPE html>
-<html>
+<!-- Created By CodingNepal -->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Login and Registration Form in HTML | CodingNepal</title>
+    <link rel="stylesheet" href="style.css" />
 
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <style>
-        body {
-            background-image: url("static\\photos\\login.jpg");
-            background-size: cover;
-            background-repeat: no-repeat;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-        /* Full-width input fields */
-        
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px 20px;
-            margin: 8px 0;
-            display: inline-block;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
-        /* Set a style for all buttons */
-        
-        button {
-            background-color: #04aa6d;
-            color: white;
-            padding: 14px 20px;
-            margin: 8px 0;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-        }
-        
-        button:hover {
-            opacity: 0.8;
-        }
-        /* Extra styles for the cancel button */
-        
-        .cancelbtn {
-            width: auto;
-            padding: 10px 40px;
-            background-color: #f44336ab;
-        }
-        /* Center the image and position the close button */
-        
-        .imgcontainer {
-            text-align: center;
-            margin: 24px 0 12px 0;
-            position: relative;
-        }
-        
-        img.avatar {
-            width: 15%;
-            height: 15%;
-            /* border-radius: 100%; */
-        }
-        
-        .container {
-            padding: 16px;
-        }
-        
-        span.psw {
-            float: right;
-            padding-top: 16px;
-        }
-        /* The Modal (background) */
-        
-        .modal {
-            display: none;
-            /* Hidden by default */
-            position: fixed;
-            /* Stay in place */
-            z-index: 1;
-            /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%;
-            /* Full width */
-            height: 100%;
-            /* Full height */
-            overflow: auto;
-            /* Enable scroll if needed */
-            background-color: rgb(0, 0, 0);
-            /* Fallback color */
-            background-color: rgba(0, 0, 0, 0.4);
-            /* Black w/ opacity */
-            padding-top: 60px;
-        }
-        /* Modal Content/Box */
-        
-        .modal-content {
-            background-color: #fefefe;
-            /* background-image: url("Style sheet/imagesHome/Soil.jpg"); */
-            background-color: #382f2f24;
-            border-radius: 50px;
-            background-size: cover;
-            margin: 5% auto 15% auto;
-            /* 5% from the top, 15% from the bottom and centered */
-            border: 1px solid #888;
-            width: 80%;
-            /* Could be more or less, depending on screen size */
-        }
-        /* The Close Button (x) */
-        
-        .close {
-            position: absolute;
-            right: 25px;
-            top: 0;
-            color: #000;
-            font-size: 35px;
-            font-weight: bold;
-        }
-        
-        .close:hover,
-        .close:focus {
-            color: red;
-            cursor: pointer;
-        }
-        /* Add Zoom Animation */
-        
-        .animate {
-            -webkit-animation: animatezoom 0.6s;
-            animation: animatezoom 0.6s;
-        }
-        
-        @-webkit-keyframes animatezoom {
-            from {
-                -webkit-transform: scale(0);
-            }
-            to {
-                -webkit-transform: scale(1);
-            }
-        }
-        
-        @keyframes animatezoom {
-            from {
-                transform: scale(0);
-            }
-            to {
-                transform: scale(1);
-            }
-        }
-        /* Change styles for span and cancel button on extra small screens */
-        
-        @media screen and (max-width: 300px) {
-            span.psw {
-                display: block;
-                float: none;
-            }
-            .cancelbtn {
-                width: 100%;
-            }
-        }
+      @import url("https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap");
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      html,
+      body {
+        display: grid;
+        height: 100%;
+        width: 100%;
+        place-items: center;
+        background: -webkit-linear-gradient(left, #69614d, #69614d);
+      }
+
+      ::selection {
+        background: #69614d;
+        color: #fff;
+      }
+
+      .wrapper {
+        position: relative;
+        overflow: hidden;
+        max-width: 390px;
+        background: #fff;
+        padding: 30px;
+        border-radius: 5px;
+        box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .wrapper .title-text {
+        position: relative;
+        display: flex;
+        width: 200%;
+      }
+
+      .wrapper .title {
+        position: relative;
+        width: 50%;
+        font-size: 35px;
+        font-weight: 600;
+        text-align: center;
+        transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      }
+
+      .wrapper .slide-controls {
+        position: relative;
+        display: flex;
+        height: 50px;
+        width: 100%;
+        overflow: hidden;
+        margin: 30px 0 10px 0;
+        justify-content: space-between;
+        border: 1px solid lightgrey;
+        border-radius: 5px;
+      }
+
+      .slide-controls .slide {
+        height: 100%;
+        width: 100%;
+        color: #fff;
+        font-size: 18px;
+        font-weight: 500;
+        text-align: center;
+        line-height: 48px;
+        cursor: pointer;
+        z-index: 1;
+        transition: all 0.6s ease;
+      }
+
+      .slide-controls label.signup {
+        color: #000;
+      }
+
+      .slide-controls .slider-tab {
+        position: absolute;
+        height: 100%;
+        width: 50%;
+        left: 0;
+        z-index: 0;
+        border-radius: 5px;
+        background: -webkit-linear-gradient(left, #a1916a, #69614d);
+        transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      }
+
+      input[type="radio"] {
+        display: none;
+      }
+
+      #signup:checked ~ .slider-tab {
+        left: 50%;
+      }
+
+      #signup:checked ~ label.signup {
+        color: #fff;
+        cursor: default;
+        user-select: none;
+      }
+
+      #signup:checked ~ label.login {
+        color: #000;
+      }
+
+      #login:checked ~ label.signup {
+        color: #000;
+      }
+
+      #login:checked ~ label.login {
+        cursor: default;
+        user-select: none;
+      }
+
+      .wrapper .form-container {
+        width: 100%;
+        overflow: hidden;
+      }
+
+      .form-container .form-inner {
+        display: flex;
+        width: 200%;
+      }
+
+      .form-container .form-inner form {
+        width: 50%;
+        transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      }
+
+      .form-inner form .field {
+        height: 50px;
+        width: 100%;
+        margin-top: 20px;
+      }
+
+      .form-inner form .field input {
+        height: 100%;
+        width: 100%;
+        outline: none;
+        padding-left: 15px;
+        border-radius: 5px;
+        border: 1px solid lightgrey;
+        border-bottom-width: 2px;
+        font-size: 17px;
+        transition: all 0.3s ease;
+      }
+
+      .form-inner form .field input:focus {
+        border-color: #69614d;
+        /* box-shadow: inset 0 0 3px #fb6aae; */
+      }
+
+      .form-inner form .field input::placeholder {
+        color: #999;
+        transition: all 0.3s ease;
+      }
+
+      form .field input:focus::placeholder {
+        color: #b3b3b3;
+      }
+
+      .form-inner form .pass-link {
+        margin-top: 5px;
+      }
+
+      .form-inner form .signup-link {
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      .form-inner form .pass-link a,
+      .form-inner form .signup-link a {
+        color: #69614d;
+        text-decoration: none;
+      }
+
+      .form-inner form .pass-link a:hover,
+      .form-inner form .signup-link a:hover {
+        text-decoration: underline;
+      }
+
+      form .btn {
+        height: 50px;
+        width: 100%;
+        border-radius: 5px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      form .btn .btn-layer {
+        height: 100%;
+        width: 300%;
+        position: absolute;
+        left: -100%;
+        background: -webkit-linear-gradient(
+          right,
+          #a1916a,
+          #69614d,
+          #a1916a,
+          #69614d
+        );
+        border-radius: 5px;
+        transition: all 0.4s ease;
+      }
+
+      form .btn:hover .btn-layer {
+        left: 0;
+      }
+
+      form .btn input[type="submit"] {
+        height: 100%;
+        width: 100%;
+        z-index: 1;
+        position: relative;
+        background: none;
+        border: none;
+        color: #fff;
+        padding-left: 0;
+        border-radius: 5px;
+        font-size: 20px;
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .video-container {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+}
+    
+
+
     </style>
-</head>
+  </head>
 
-<body>
-    <form class="modal-content animate" action="/action_page.php" method="post">
-        <div class="imgcontainer">
-            <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal"><a href="home.html" class="btn">&times</a></span>
-           
-        
-        <img src="static\photos\Avtar1.png" alt="Avatar" class="avatar" />
+  <body>
+   
+  <section class="home"> 
+    <div class="video-container">
+      <video src="static\photos\back.mp4" id="video-slider" autoplay loop muted></video>
+    </div>
+    
+  <div class="wrapper">
+      <div class="title-text">
+        <div class="title login">Login Form</div>
+        <div class="title signup">Signup Form</div>
       </div>
-
-      <div class="container">
-        <label for="uname"><b>Username</b></label>
-        <input type="text" placeholder="Enter Username" name="uname" required />
-
-        <label for="psw"><b>Password</b></label>
-        <input
-          type="password"
-          placeholder="Enter Password"
-          name="psw"
-          required
-        />
-
-        <button type="submit">Login</button>
-        <label>
-          <input type="checkbox" checked="checked" name="remember" /> Remember
-          me
-        </label>
-      </div>
-
-      <div class="container" style="background-color: #382f2f51">
-        <button
-        href="home.html"
-          type="button"
-          onclick="document.getElementById('id01').style.display='none'"
-          class="cancelbtn"
-
-        >
-        <a href="home.html" class="btn">cansel</a>
-
-        </button>
-         
-        <span class="psw">Forgot <a href="#">password?</a></span>
+      <div class="form-container">
+        <div class="slide-controls">
+          <input type="radio" name="slide" id="login" checked />
+          <input type="radio" name="slide" id="signup" />
+          <label for="login" class="slide login">Login</label>
+          <label for="signup" class="slide signup">Signup</label>
+          <div class="slider-tab"></div>
         </div>
-    </form>
-
+        <div class="form-inner">
+          <form action="#" class="login">
+            <div class="field">
+              <input type="text" placeholder="Email Address" required />
+            </div>
+            <div class="field">
+              <input type="password" placeholder="Password" required />
+            </div>
+            <div class="pass-link">
+              <a href="#">Forgot password?</a>
+            </div>
+            <div class="field btn">
+              <div class="btn-layer"></div>
+              <input type="submit" value="Login" />
+            </div>
+            <div class="signup-link">
+              Not a member? <a href="">Signup now</a>
+            </div>
+          </form>
+          <form action="#" class="signup">
+            <div class="field">
+              <input type="text" placeholder="Email Address" required />
+            </div>
+            <div class="field">
+              <input type="password" placeholder="Password" required />
+            </div>
+            <div class="field">
+              <input type="password" placeholder="Confirm password" required />
+            </div>
+            <div class="field btn">
+              <div class="btn-layer"></div>
+              <input type="submit" value="Signup" />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  
     <script>
-        // Get the modal
-        var modal = document.getElementById("id01");
-
-        // When the user clicks anywhere outside of the modal, close it
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        };
+      const loginText = document.querySelector(".title-text .login");
+      const loginForm = document.querySelector("form.login");
+      const loginBtn = document.querySelector("label.login");
+      const signupBtn = document.querySelector("label.signup");
+      const signupLink = document.querySelector("form .signup-link a");
+      signupBtn.onclick = () => {
+        loginForm.style.marginLeft = "-50%";
+        loginText.style.marginLeft = "-50%";
+      };
+      loginBtn.onclick = () => {
+        loginForm.style.marginLeft = "0%";
+        loginText.style.marginLeft = "0%";
+      };
+      signupLink.onclick = () => {
+        signupBtn.click();
+        return false;
+      };
     </script>
-</body>
-
+    
+  </body>
 </html>
