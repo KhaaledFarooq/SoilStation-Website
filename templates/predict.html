@@ -125,6 +125,12 @@
         text-align: center;
     }
     
+    h3 {
+        font-size: 20px;
+        position: static;
+        text-align: center;
+    }
+    
     .center {
         display: block;
         margin-left: auto;
@@ -135,6 +141,54 @@
         position: right;
         margin-left: auto;
         margin-right: auto;
+    }
+    
+    .center {
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    table {
+        width: 60%;
+        position: relative;
+        align-content: center;
+    }
+    
+    .styled-table {
+        border-collapse: collapse;
+        margin: 25px 20%;
+        font-size: 2em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .styled-table thead tr {
+        background-color: #b45736;
+        color: #ffffff;
+        text-align: left;
+    }
+    
+    .styled-table th,
+    .styled-table td {
+        padding: 12px 15px;
+    }
+    
+    .styled-table tbody tr {
+        border-bottom: 1px solid #dddddd;
+    }
+    
+    .styled-table tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3;
+    }
+    
+    .styled-table tbody tr:last-of-type {
+        border-bottom: 2px solid #b45736;
+    }
+    
+    .styled-table tbody tr.active-row {
+        font-weight: bold;
+        color: #b45736;
     }
 </style>
 
@@ -185,30 +239,42 @@
 
     <br /><br />
 
-    <div class="vertical-center">
-        <button>Plants</button>
-    </div>
-    <table>
-        <tr>
-            <th>Soil Type</th>
-            <th>Probability</th>
-        </tr>
-        <tr>
-            <td>Black Soil</td>
-            <td>{{blackPercentage}}</td>
-        </tr>
-        <tr>
-            <td>Laterite Soil</td>
-            <td>{{lateralPercentage}}</td>
-        </tr>
-        <tr>
-            <td>Peat Soil</td>
-            <td>{{peatPercentage}}</td>
-        </tr>
-        <tr>
-            <td>Yellow Soil</td>
-            <td>{{yellowPercentage}}</td>
-        </tr>
+
+    <button class="vertical-center">Plants</button>
+
+    <br /><br /> <br /><br />
+    <h3>-------- Soil Type Probability --------</h3>
+
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>
+                    <h4>Soil Type</h4>
+                </th>
+                <th>
+                    <h4>Probability</h4>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Black Soil</td>
+                <td>{{blackPercentage}}</td>
+            </tr>
+
+            <tr>
+                <td>Laterite Soil</td>
+                <td>{{lateralPercentage}}</td>
+            </tr>
+            <tr>
+                <td>Peat Soil</td>
+                <td>{{peatPercentage}}</td>
+            </tr>
+            <tr>
+                <td>Yellow Soil</td>
+                <td>{{yellowPercentage}}</td>
+            </tr>
+        </tbody>
     </table>
 
     {% endif %}
