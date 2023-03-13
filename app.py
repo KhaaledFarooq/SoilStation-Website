@@ -1,18 +1,27 @@
 #Importing Modules
-from flask import Flask, render_template, request
-from keras.models import load_model
+from flask import Flask, render_template, request, redirect
+import mysql.connector
 from keras.utils import load_img, img_to_array
+from keras.models import load_model
 import numpy as np
 import os
 
 #intializing the flask app
-app  = Flask('Soil_Identifier',template_folder=r'C:\Users\hp\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\hp\Documents\SoilStation-Website\static')
+app  = Flask('Soil_Identifier',template_folder=r'C:\Users\dell\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\dell\Documents\SoilStation-Website\static')
+
+#connecting to the database
+mydb = mysql.connector.connect(
+	host="localhost",
+	user="root",
+	password="",
+	database="soilstation"
+)
 
 #Class of soil
 classes = ["Black Soil","Laterite Soil","Peat Soil","Yellow Soil"]
 
 #Loading trained model
-model = load_model(r"C:\Users\hp\Documents\SoilStation-Website\SoilTypeIdentify.h5")
+model = load_model(r"C:\Users\dell\Documents\SoilStation-Website\SoilTypeIdentify.h5")
 
 
 #Function to predict the soil type
@@ -74,7 +83,7 @@ def get_output():
 		img = request.files["my_image"]
 
 		#Set path to save image
-		img_path1 = r"C:\Users\hp\Documents\SoilStation-Website\static\img"
+		img_path1 = r"C:\Users\dell\Documents\SoilStation-Website\static\img"
 		img_path2 = img.filename
 		stat_dir = r"\static\img" #Flask static directory
 
@@ -109,16 +118,48 @@ def about():
 def logIn():
 	return render_template("login.html")
 
-#Setting signup page app routw
+#Check login with database
+@app.route('/login', methods=['POST'])
+def login():
+	username = request.form['username']
+	password = request.form['password']
+
+	mycursor = mydb.cursor()
+	mycursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, password))
+	user = mycursor.fetchone()
+
+	if user:
+		return "Login successful"
+	else:
+		return "Login failed"
+
+
+#Setting signup page app route
 @app.route("/signup.html", methods=['GET', 'POST'])
 def signIn():
 	return render_template("signup.html")
 
-#Setting signup page app routw
+#checks if the user exists if not allows sign up
+@app.route('/signup', methods=['POST'])
+def signup_post():
+    username = request.form['sUsername']
+    password = request.form['sPassword']
+
+    mycursor = mydb.cursor()
+    mycursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+    existing_user = mycursor.fetchone()
+    if existing_user:
+        return "Username already exists"
+    else:
+        mycursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
+        mydb.commit()
+        return "Signup successful"
+
+
+#Setting contact page app route
 @app.route("/contact.html", methods=['GET', 'POST'])
 def contactUs():
 	return render_template("contact.html")
-
 
 #Running the app
 if __name__ =='__main__':
