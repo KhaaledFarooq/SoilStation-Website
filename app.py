@@ -10,7 +10,7 @@ from io import BytesIO
 from PIL import Image
 
 #intializing the flask app
-app  = Flask('Soil_Identifier',template_folder=r'C:\Users\dell\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\dell\Documents\SoilStation-Website\static')
+app  = Flask('Soil_Identifier',template_folder=r'C:\Users\hp\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\hp\Documents\SoilStation-Website\static')
 
 
 soilID = 0
@@ -27,7 +27,7 @@ mydb = mysql.connector.connect(
 classes = ["Black Soil","Laterite Soil","Peat Soil","Yellow Soil"]
 
 #Loading trained model
-model = load_model(r"C:\Users\dell\Documents\SoilStation-Website\SoilTypeIdentify.h5")
+model = load_model(r"C:\Users\hp\Documents\SoilStation-Website\SoilTypeIdentify.h5")
 
 
 #Function to predict the soil type
@@ -92,7 +92,7 @@ def get_output():
 		img = request.files["my_image"]
 
 		#Set path to save image
-		img_path1 = r"C:\Users\dell\Documents\SoilStation-Website\static\img"
+		img_path1 = r"C:\Users\hp\Documents\SoilStation-Website\static\img"
 		img_path2 = img.filename
 		stat_dir = r"\static\img" #Flask static directory
 
@@ -169,6 +169,9 @@ def signup_post():
 @app.route("/contact.html", methods=['GET', 'POST'])
 def contactUs():
 	return render_template("contact.html")
+
+
+
 
 
 #Setting plant recomendation page app route
