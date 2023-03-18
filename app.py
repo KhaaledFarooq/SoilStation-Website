@@ -8,9 +8,11 @@ import os
 import base64
 from io import BytesIO
 from PIL import Image
+import smtplib
+from email.message import EmailMessage
 
 #intializing the flask app
-app  = Flask('Soil_Identifier',template_folder=r'C:\Users\ramin\OneDrive\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\ramin\OneDrive\Documents\SoilStation-Website\static')
+app  = Flask('Soil_Identifier',template_folder=r'C:\Users\dell\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\dell\Documents\SoilStation-Website\static')
 
 
 soilID = 0
@@ -27,7 +29,7 @@ mydb = mysql.connector.connect(
 classes = ["Black Soil","Laterite Soil","Peat Soil","Yellow Soil"]
 
 #Loading trained model
-model = load_model(r"C:\Users\ramin\OneDrive\Documents\SoilStation-Website\SoilTypeIdentify.h5")
+model = load_model(r"C:\Users\dell\Documents\SoilStation-Website\SoilTypeIdentify.h5")
 
 
 #Function to predict the soil type
@@ -92,7 +94,7 @@ def get_output():
 		img = request.files["my_image"]
 
 		#Set path to save image
-		img_path1 = r"C:\Users\ramin\OneDrive\Documents\SoilStation-Website\static\img"
+		img_path1 = r"C:\Users\dell\Documents\SoilStation-Website\static\img"
 		img_path2 = img.filename
 		stat_dir = r"\static\img" #Flask static directory
 
@@ -168,10 +170,41 @@ def signup_post():
 #Setting contact page app route
 @app.route("/contact.html", methods=['GET', 'POST'])
 def contactUs():
-	return render_template("contact.html")
+    if request.method == 'POST':
+        # Get form data
+        name = request.form['name']
+        email = request.form['email']
+        message = request.form['message']
+        subject = request.form['subject']
+
+        # Create email message
+        msg = EmailMessage()
+        msg['Subject'] = 'New contact form submission from ' + name
+        msg['From'] = email
+        msg['To'] = 'soilstation.se32@gmail.com' 
+        msg.set_content('Name: ' + name + '\n\nEmail: ' + email + '\n\nSubject: ' + subject + '\n\nMessage: ' + message)
+
+        # Send email
+        try:
+            with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+                smtp.starttls()
+                smtp.login('soilstation.se32@gmail.com', 'izjuhdugrmobvfiw') 
+                smtp.send_message(msg)
+        except (smtplib.SMTPException, smtplib.SMTPAuthenticationError) as e:
+            print('Error occurred while sending email:', str(e))
+            return "Error occurred while sending email. Please try again later."
+
+        return render_template("contact.html", message="Your message has been sent. Thank you!")
+
+    # If request.method is GET, render the contact form
+    return render_template("contact.html")
 
 
 
+#Setting contact page app route
+@app.route("/history.html", methods=['GET', 'POST'])
+def checkHistory():
+	return render_template("history.html")
 
 
 #Setting plant recomendation page app route
