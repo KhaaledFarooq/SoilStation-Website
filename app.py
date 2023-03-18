@@ -16,6 +16,9 @@ app  = Flask('Soil_Identifier',template_folder=r'C:\Users\dell\Documents\SoilSta
 
 
 soilID = 0
+User = "defaultuser"
+loggedin = False
+predicted = False
 
 #connecting to the database
 mydb = mysql.connector.connect(
@@ -46,6 +49,8 @@ def predict(file):
     predsLabel = np.argmax(preds) #return the class with highest probability
     global soilID 
     soilID = int(predsLabel)+1
+    global predicted
+    predicted = True
     #print(soilID)
     
 	#Converting probabilities in to percentages
@@ -69,22 +74,35 @@ def predict(file):
 #Setting starting app route
 @app.route("/", methods=['GET', 'POST'])
 def main():
-	return render_template("home.html")
+	return render_template("login.html")
+
 
 #Setting home page app route
 @app.route("/home.html", methods=['GET', 'POST'])
 def toHome():
-	return render_template("home.html")
+    if loggedin:
+        return render_template("home.html")
+    else:
+        return render_template("login.html")
+
 
 #Setting reccomendation page app route
 @app.route("/Recommendation.html", methods=['GET', 'POST'])
 def recommend():
-	return render_template("Recommendation.html")
+    if loggedin:
+        return render_template("Recommendation.html")
+    else:
+        return render_template("login.html")
+
 
 #Setting prediction page app route
 @app.route("/predict.html", methods=['GET', 'POST'])
 def predicting():
-	return render_template("predict.html")	
+    if loggedin:
+        return render_template("predict.html") 
+    else:
+        return render_template("login.html")	
+
 
 #Setting submit page app route
 @app.route("/submit", methods = ['GET', 'POST'])
@@ -119,15 +137,21 @@ def get_output():
 	return render_template("predict.html", prediction = prediction, img_path = img_path, blackPercentage = blackPercentage,
 			lateralPercentage = lateralPercentage, peatPercentage = peatPercentage, yellowPercentage = yellowPercentage)
 
+
 #Setting AboutUs page app route
 @app.route("/AboutUs.html", methods=['GET', 'POST'])
 def about():
-	return render_template("AboutUs.html")	
+    if loggedin:
+        return render_template("AboutUs.html") 
+    else:
+        return render_template("login.html")	
+
 
 #Setting login page app route
 @app.route("/login.html", methods=['GET', 'POST'])
 def logIn():
 	return render_template("login.html")
+
 
 #Check login with database
 @app.route('/login', methods=['POST'])
@@ -140,15 +164,18 @@ def login():
 	user = mycursor.fetchone()
 
 	if user:
-		return "Login successful"
+		global loggedin
+		loggedin = True
+		return render_template("home.html")
 	else:
-		return "Login failed"
+		return render_template("login.html", message1="Login unsuccessful!!!", message2="Wrong username and or Password!!!")
 
 
-#Setting signup page app route
-@app.route("/signup.html", methods=['GET', 'POST'])
-def signIn():
-	return render_template("signup.html")
+# #Setting signup page app route
+# @app.route("/signup.html", methods=['GET', 'POST'])
+# def signIn():
+# 	return render_template("signup.html")
+
 
 #checks if the user exists if not allows sign up
 @app.route('/signup', methods=['POST'])
@@ -160,71 +187,84 @@ def signup_post():
     mycursor.execute("SELECT * FROM users WHERE username = %s", (username,))
     existing_user = mycursor.fetchone()
     if existing_user:
-        return "Username already exists"
+        return render_template("login.html", message3="Username already exists")
+    
     else:
         mycursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
         mydb.commit()
-        return "Signup successful"
+        return render_template("login.html", message3="Account Created Successfully!!!")
 
 
 #Setting contact page app route
 @app.route("/contact.html", methods=['GET', 'POST'])
 def contactUs():
-    if request.method == 'POST':
-        # Get form data
-        name = request.form['name']
-        email = request.form['email']
-        message = request.form['message']
-        subject = request.form['subject']
+    if loggedin:
+        if request.method == 'POST':
+            # Get form data
+            name = request.form['name']
+            email = request.form['email']
+            message = request.form['message']
+            subject = request.form['subject']
 
-        # Create email message
-        msg = EmailMessage()
-        msg['Subject'] = 'New contact form submission from ' + name
-        msg['From'] = email
-        msg['To'] = 'soilstation.se32@gmail.com' 
-        msg.set_content('Name: ' + name + '\n\nEmail: ' + email + '\n\nSubject: ' + subject + '\n\nMessage: ' + message)
+            # Create email message
+            msg = EmailMessage()
+            msg['Subject'] = 'New contact form submission from ' + name
+            msg['From'] = email
+            msg['To'] = 'soilstation.se32@gmail.com' 
+            msg.set_content('Name: ' + name + '\n\nEmail: ' + email + '\n\nSubject: ' + subject + '\n\nMessage: ' + message)
 
-        # Send email
-        try:
-            with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
-                smtp.starttls()
-                smtp.login('soilstation.se32@gmail.com', 'izjuhdugrmobvfiw') 
-                smtp.send_message(msg)
-        except (smtplib.SMTPException, smtplib.SMTPAuthenticationError) as e:
-            print('Error occurred while sending email:', str(e))
-            return "Error occurred while sending email. Please try again later."
+            # Send email
+            try:
+                with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+                    smtp.starttls()
+                    smtp.login('soilstation.se32@gmail.com', 'izjuhdugrmobvfiw') 
+                    smtp.send_message(msg)
+            except (smtplib.SMTPException, smtplib.SMTPAuthenticationError) as e:
+                print('Error occurred while sending email:', str(e))
+                return "Error occurred while sending email. Please try again later."
 
-        return render_template("contact.html", message="Your message has been sent. Thank you!")
+            return render_template("contact.html", message="Your message has been sent. Thank you!")
 
-    # If request.method is GET, render the contact form
-    return render_template("contact.html")
+        # If request.method is GET, render the contact form
+        return render_template("contact.html")
+    else:
+        return render_template("login.html")
 
 
 
 #Setting contact page app route
 @app.route("/history.html", methods=['GET', 'POST'])
 def checkHistory():
-	return render_template("history.html")
+    if loggedin:
+        return render_template("history.html") 
+    else:
+        return render_template("login.html")
 
 
 #Setting plant recomendation page app route
 @app.route("/plants.html", methods=['GET', 'POST'])
 def plantRecommend():
-    mycursor = mydb.cursor()
-    mycursor.execute('SELECT Plant_Name, Image, Description, Treatment_Methods FROM plants WHERE Soil_ID = %s',(soilID,))
-    plants = mycursor.fetchall()
-    
-    # Convert BLOB images to PNG format and base64-encoded data URIs
-    new_plants = []
-    for plant in plants:
-        img = Image.open(BytesIO(plant[1]))
-        buffer = BytesIO()
-        img.save(buffer, format='PNG')
-        img_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
-        img_data_uri = f"data:image/png;base64,{img_str}"
-        new_plants.append((plant[0], img_data_uri, plant[2], plant[3]))
-    
-    return render_template('plants.html', plants=new_plants)
+    if loggedin:
+        if predicted:
+            mycursor = mydb.cursor()
+            mycursor.execute('SELECT Plant_Name, Image, Description, Treatment_Methods FROM plants WHERE Soil_ID = %s',(soilID,))
+            plants = mycursor.fetchall()
+            
+            # Convert BLOB images to PNG format and base64-encoded data URIs
+            new_plants = []
+            for plant in plants:
+                img = Image.open(BytesIO(plant[1]))
+                buffer = BytesIO()
+                img.save(buffer, format='PNG')
+                img_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
+                img_data_uri = f"data:image/png;base64,{img_str}"
+                new_plants.append((plant[0], img_data_uri, plant[2], plant[3]))
+            
+            return render_template('plants.html', plants=new_plants)
+        else:
+            return render_template("predict.html")
+    else:
+        return render_template("login.html")
 
 #Running the app
 if __name__ =='__main__':
