@@ -4,61 +4,6 @@
 <head>
     <link rel="stylesheet" href="static\Style sheet\header.css" />
     <link rel="stylesheet" href="static\Style sheet\footer.css" />
-
-    <style>
-        body {
-            font-family: sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        
-        h1 {
-            margin: 0;
-            font-size: 40px;
-            text-align: center;
-        }
-        
-        .plant-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .plant-card {
-            margin: 20px;
-            border: 1px solid #dddddd;
-            border-radius: 5px;
-            box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.3);
-            width: 300px;
-        }
-        
-        .plant-image {
-            height: 200px;
-            object-fit: cover;
-            width: 100%;
-        }
-        
-        .plant-name {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 10px;
-            text-align: center;
-        }
-        
-        .plant-description {
-            font-size: 16px;
-            margin: 10px;
-            text-align: justify;
-        }
-        
-        .plant-treatment-methods {
-            font-size: 16px;
-            margin: 10px;
-            text-align: justify;
-        }
-    </style>
 </head>
 
 <body>
@@ -69,28 +14,15 @@
         <div class="nav" id="navId">
             <a href="home.html">Home</a>
             <a href="predict.html">Predict</a>
-            <a href="login.html">History</a>
             <a href="AboutUs.html">About Us</a>
-            <a href="contact.html">Contact</a>
-            <a href="login.html">Login</a>
+            <a href="contact.html">contact</a>
+            <a href="login.html">login</a>
 
             <a href="javascript:void(0);" class="icon" onclick="myFunction()">
                 <i class="fa fa-bars"></i>
             </a>
         </div>
     </header>
-    <br /><br /><br /><br /><br /><br />
-    <h1>Plant Recommendations</h1>
-    <div class="plant-container">
-        {% for plant in plants %}
-        <div class="plant-card">
-            <img class="plant-image" src="{{ plant[1] }}" alt="{{ plant[0] }}" />
-            <div class="plant-name">{{ plant[0] }}</div>
-            <div class="plant-description">{{ plant[2] }}</div>
-            <div class="plant-treatment-methods">{{ plant[3] }}</div>
-        </div>
-        {% endfor %}
-    </div>
 
     <!--footer section starts-->
 
