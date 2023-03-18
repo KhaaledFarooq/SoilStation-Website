@@ -4,13 +4,36 @@
 <head>
     <link rel="stylesheet" href="static\Style sheet\header.css" />
     <link rel="stylesheet" href="static\Style sheet\footer.css" />
-</head>
+    <style>
+        .login-history-table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 1em;
+        }
+
+        .login-history-table th,
+        .login-history-table td {
+        padding: 0.5em;
+        border: 1px solid #ccc;
+        text-align: left;
+        }
+
+        .login-history-table th {
+        background-color: #eee;
+        font-weight: bold;
+        }
+
+        .login-history-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+        }
+    </style>
+</head> 
 
 <body>
-    <header>
+    <!-- <header>
         <a href="home.html"><img src="static\photos\logo.png" width="250px" height="65px" /></a>
 
-        <!--navigation bar-->
+        
         <div class="nav" id="navId">
             <a href="home.html">Home</a>
             <a href="predict.html">Predict</a>
@@ -22,10 +45,40 @@
                 <i class="fa fa-bars"></i>
             </a>
         </div>
-    </header>
+    </header> -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+  
+
+    <table class="login-history-table">
+        <thead>
+          <tr>
+            <th>Soil ID</th>
+            <th>Soil Name</th>
+            <th>History Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+            <tr>
+              <td>{{ row[0] }}</td>
+              <td>{{ row[1] }}</td>
+              <td>{{ row[2] }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
 
     <!--footer section starts-->
-
+<!-- 
     <footer>
         <div class="content">
             <div class="top">
@@ -88,7 +141,7 @@
           </span>
             </div>
         </div>
-    </footer>
+    </footer> -->
 
     <!--footer section End-->
 </body>

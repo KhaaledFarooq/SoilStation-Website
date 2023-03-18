@@ -10,6 +10,7 @@ from io import BytesIO
 from PIL import Image
 import smtplib
 from email.message import EmailMessage
+import datetime
 
 #intializing the flask app
 app  = Flask('Soil_Identifier',template_folder=r'C:\Users\dell\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\dell\Documents\SoilStation-Website\static')
@@ -19,6 +20,8 @@ soilID = 0
 User = "defaultuser"
 loggedin = False
 predicted = False
+userid = 1
+current_date = datetime.date.today()
 
 #connecting to the database
 mydb = mysql.connector.connect(
@@ -52,6 +55,10 @@ def predict(file):
     global predicted
     predicted = True
     #print(soilID)
+
+    mycursor = mydb.cursor()
+    mycursor.execute("INSERT INTO login_history (user_ID, soil_ID, history_date) VALUES (%s, %s, %s)", (userid, soilID, current_date))
+    mydb.commit()
     
 	#Converting probabilities in to percentages
     num0 = (preds[0][0])*100 #black percentage
@@ -156,19 +163,24 @@ def logIn():
 #Check login with database
 @app.route('/login', methods=['POST'])
 def login():
-	username = request.form['username']
-	password = request.form['password']
+    username = request.form['username']
+    password = request.form['password']
 
-	mycursor = mydb.cursor()
-	mycursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, password))
-	user = mycursor.fetchone()
+    mycursor = mydb.cursor()
+    mycursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, password))
+    user = mycursor.fetchone()
 
-	if user:
-		global loggedin
-		loggedin = True
-		return render_template("home.html")
-	else:
-		return render_template("login.html", message1="Login unsuccessful!!!", message2="Wrong username and or Password!!!")
+    if user:
+        global loggedin
+        loggedin = True 
+        mycursor.execute("SELECT user_ID FROM users WHERE username = %s", (username,))
+        result = mycursor.fetchone()
+        global userid
+        userid = result[0]
+        print(userid)
+        return render_template("home.html")
+    else:
+        return render_template("login.html", message1="Login unsuccessful!!!", message2="Wrong username and or Password!!!")
 
 
 # #Setting signup page app route
@@ -236,7 +248,15 @@ def contactUs():
 @app.route("/history.html", methods=['GET', 'POST'])
 def checkHistory():
     if loggedin:
-        return render_template("history.html") 
+        # perform a SQL query to retrieve the relevant data
+        cursor = mydb.cursor()
+        cursor.execute("SELECT soil_types.soil_ID, soil_types.Soil_Type, login_history.history_date FROM login_history JOIN soil_types ON login_history.soil_ID = soil_types.soil_ID WHERE login_history.user_ID = %s",(userid,))
+        rows = cursor.fetchall()
+        # if there are no records, display a message instead of the table
+        if not rows:
+            return "No login history found for this user."
+        # pass the data to the Jinja template to render the table
+        return render_template('history.html', rows=rows)
     else:
         return render_template("login.html")
 
