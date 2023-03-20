@@ -12,7 +12,7 @@ header {
   z-index: 5;
 }
 
-.nav a {
+.navw a {
   color: rgb(0, 0, 0);
   font-size: 18px;
   text-transform: uppercase;
@@ -22,13 +22,13 @@ header {
   line-height: 80px;
 }
 
-.nav a:hover {
+.navw a:hover {
   border: 1px solid rgb(69, 46, 11);
   transition: 0.5s;
   color: rgb(69, 46, 11);
 }
 
-.nav .icon {
+.navw .icon {
   color: #fff;
   font-size: 30px;
   line-height: 80px;
