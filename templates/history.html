@@ -76,6 +76,15 @@
       .styled-table tbody tr:last-of-type {
         border-bottom: 2px solid #b45736;
       }
+
+      h1 {
+            font-size: 60px;
+            position: static;
+            text-align: center;
+            color: #542525;
+            font-family: sans-serif;
+      }
+
     </style>
   </head>
 
@@ -107,6 +116,7 @@
     <div class="alert alert-{{ category }}">{{ message }}</div>
     {% endfor %} {% endif %} {% endwith %}
 
+    {% if rows %}
     <table class="styled-table">
       <thead>
         <tr>
@@ -125,6 +135,13 @@
         {% endfor %}
       </tbody>
     </table>
+    {% endif %}
+
+    {% if msg %}
+
+    <h1>{{msg}}</h1>
+
+    {% endif %}
 
     <!--footer section starts-->
 

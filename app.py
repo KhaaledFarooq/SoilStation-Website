@@ -13,7 +13,7 @@ from email.message import EmailMessage
 import datetime
 
 #intializing the flask app
-app  = Flask('Soil_Identifier',template_folder=r'C:\Users\ramin\OneDrive\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\ramin\OneDrive\Documents\SoilStation-Website\static')
+app  = Flask('Soil_Identifier',template_folder=r'C:\Users\dell\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\dell\Documents\SoilStation-Website\static')
 
 
 soilID = 0
@@ -35,7 +35,7 @@ mydb = mysql.connector.connect(
 classes = ["Black Soil","Laterite Soil","Peat Soil","Yellow Soil"]
 
 #Loading trained model
-model = load_model(r"C:\Users\ramin\OneDrive\Documents\SoilStation-Website\SoilTypeIdentify.h5")
+model = load_model(r"C:\Users\dell\Documents\SoilStation-Website\SoilTypeIdentify.h5")
 
 
 #Function to predict the soil type
@@ -119,7 +119,7 @@ def get_output():
 		img = request.files["my_image"]
 
 		#Set path to save image
-		img_path1 = r"C:\Users\ramin\OneDrive\Documents\SoilStation-Website\static\img"
+		img_path1 = r"C:\Users\dell\Documents\SoilStation-Website\static\img"
 		img_path2 = img.filename
 		stat_dir = r"\static\img" #Flask static directory
 
@@ -254,7 +254,7 @@ def checkHistory():
         rows = cursor.fetchall()
         # if there are no records, display a message instead of the table
         if not rows:
-            return "No login history found for this user."
+            return render_template('history.html', msg = "No History records found for this user ")
         # pass the data to the Jinja template to render the table
         return render_template('history.html', rows=rows)
     else:
@@ -285,6 +285,65 @@ def plantRecommend():
             return render_template("predict.html")
     else:
         return render_template("login.html")
+    
+
+@app.route("/signout.html", methods= ["GET"])
+def signingout():
+    global loggedin
+    if loggedin:
+        loggedin = False
+        return render_template("login.html")
+    else:
+        return render_template("login.html")
+
+
+@app.route("/black.html", methods= ["GET"])
+def getBlack():
+    global soilID
+    global predicted
+    if loggedin:
+        soilID = 1
+        predicted = True
+        return redirect("/plants.html")
+    else:
+        return render_template("login.html")
+
+  
+@app.route("/laterite.html", methods= ["GET"])
+def getLaterite():
+    global soilID
+    global predicted
+    if loggedin:
+        soilID = 2
+        predicted = True
+        return redirect("/plants.html")
+    else:
+        return render_template("login.html")
+
+
+@app.route("/peat.html", methods= ["GET"])
+def getPeat():
+    global soilID
+    global predicted
+    if loggedin:
+        soilID = 3
+        predicted = True
+        return redirect("/plants.html")
+    else:
+        return render_template("login.html")
+
+
+@app.route("/yellow.html", methods= ["GET"])
+def getYellow():
+    global soilID
+    global predicted
+    if loggedin:
+        soilID = 4
+        predicted = True
+        return redirect("/plants.html")
+    else:
+        return render_template("login.html")
+
 
 #Running the app
 if __name__ =='__main__':
