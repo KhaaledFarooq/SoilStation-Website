@@ -11,6 +11,8 @@ from PIL import Image
 import smtplib
 from email.message import EmailMessage
 import datetime
+import re
+import hashlib
 
 #intializing the flask app
 app  = Flask('Soil_Identifier',template_folder=r'C:\Users\dell\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\dell\Documents\SoilStation-Website\static')
@@ -161,13 +163,17 @@ def logIn():
 
 
 #Check login with database
+# Login function
 @app.route('/login', methods=['POST'])
 def login():
     username = request.form['username']
     password = request.form['password']
 
+    # Hash the password
+    password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
+
     mycursor = mydb.cursor()
-    mycursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, password))
+    mycursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, password_hash))
     user = mycursor.fetchone()
 
     if user:
@@ -182,29 +188,35 @@ def login():
     else:
         return render_template("login.html", message1="Login unsuccessful!!!", message2="Wrong username and or Password!!!")
 
-
 # #Setting signup page app route
 # @app.route("/signup.html", methods=['GET', 'POST'])
 # def signIn():
 # 	return render_template("signup.html")
 
-
 #checks if the user exists if not allows sign up
+# Signup function
 @app.route('/signup', methods=['POST'])
 def signup_post():
     username = request.form['sUsername']
     password = request.form['sPassword']
+
+    # Hash the password
+    password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
+
+    # Password validation
+    if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=]).{8,}$', password):
+        return render_template("login.html", message3="Password should be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character")
 
     mycursor = mydb.cursor()
     mycursor.execute("SELECT * FROM users WHERE username = %s", (username,))
     existing_user = mycursor.fetchone()
     if existing_user:
         return render_template("login.html", message3="Username already exists")
-    
     else:
-        mycursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
+        mycursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password_hash))
         mydb.commit()
         return render_template("login.html", message3="Account Created Successfully!!!")
+
 
 
 #Setting contact page app route
