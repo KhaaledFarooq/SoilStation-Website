@@ -7,20 +7,16 @@
     box-sizing: border-box;
     font-family: "Poppins", sans-serif;
 }
-
-body {
-    min-height: 100vh;
-    width: 100%;
-    background: #eeeceb;
-} */
+*/
 
 footer {
+  /* position: absolute; */
   bottom: 0;
   left: 0;
   right: 0;
   background: #542525;
-  height: auto;
-  padding-top: 20px;
+  height: 20%;
+  padding-top: 2px;
   width: 100vw;
 }
 

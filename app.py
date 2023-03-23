@@ -13,9 +13,10 @@ from email.message import EmailMessage
 import datetime
 import re
 import hashlib
+import imghdr
 
 #intializing the flask app
-app  = Flask('Soil_Identifier',template_folder=r'C:\Users\dell\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\dell\Documents\SoilStation-Website\static')
+app  = Flask('Soil_Identifier',template_folder=r'C:\Users\hp\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\hp\Documents\SoilStation-Website\static')
 
 
 soilID = 0
@@ -37,7 +38,7 @@ mydb = mysql.connector.connect(
 classes = ["Black Soil","Laterite Soil","Peat Soil","Yellow Soil"]
 
 #Loading trained model
-model = load_model(r"C:\Users\dell\Documents\SoilStation-Website\SoilTypeIdentify.h5")
+model = load_model(r"C:\Users\hp\Documents\SoilStation-Website\SoilTypeIdentify.h5")
 
 
 #Function to predict the soil type
@@ -113,38 +114,42 @@ def predicting():
         return render_template("login.html")	
 
 
-#Setting submit page app route
+#Setting submit page app route 
 @app.route("/submit", methods = ['GET', 'POST'])
 def get_output():
-	if request.method == 'POST':
-		#Request user uploaded image
-		img = request.files["my_image"]
+    if request.method == 'POST':
+        #Request user uploaded image
+        img = request.files["my_image"]
 
-		#Set path to save image
-		img_path1 = r"C:\Users\dell\Documents\SoilStation-Website\static\img"
-		img_path2 = img.filename
-		stat_dir = r"\static\img" #Flask static directory
+        # Check if the file is an image
+        if not imghdr.what(img) in {'png', 'jpeg', 'jpg', 'jfif'}:
+            return render_template("predict.html", warn = "Invalid file type. Please upload a PNG, JPEG, JPG or JFIF image.")
 
-		#Path to save image
-		img_path = os.path.join(img_path1+"\\"+img_path2)	
-		img.save(img_path)
+        #Set path to save image
+        img_path1 = r"C:\Users\hp\Documents\SoilStation-Website\static\img"
+        img_path2 = img.filename
+        stat_dir = r"\static\img" #Flask static directory
 
-		#Predicting the given image
-		reuslts = predict(img_path)
+        #Path to save image
+        img_path = os.path.join(img_path1+"\\"+img_path2)    
+        img.save(img_path)
 
-		#New saved image in the static directory
-		img_path = os.path.join(stat_dir+"\\"+img_path2)
+        #Predicting the given image
+        results = predict(img_path)
 
-		#Predicted results
-		prediction = (reuslts[0]) # Predicted soil type
-		blackPercentage = ("{:.2f}".format(reuslts[1])+" %") #Black percentage
-		lateralPercentage = ("{:.2f}".format(reuslts[2])+" %") #Laterite percentage
-		peatPercentage = ("{:.2f}".format(reuslts[3])+" %") #Peat percentage
-		yellowPercentage = ("{:.2f}".format(reuslts[4])+" %") #Yellow percentage
+        #New saved image in the static directory
+        img_path = os.path.join(stat_dir+"\\"+img_path2)
 
+        #Predicted results
+        prediction = (results[0]) # Predicted soil type
+        blackPercentage = ("{:.2f}".format(results[1])+" %") #Black percentage
+        lateralPercentage = ("{:.2f}".format(results[2])+" %") #Laterite percentage
+        peatPercentage = ("{:.2f}".format(results[3])+" %") #Peat percentage
+        yellowPercentage = ("{:.2f}".format(results[4])+" %") #Yellow percentage
 
-	return render_template("predict.html", prediction = prediction, img_path = img_path, blackPercentage = blackPercentage,
-			lateralPercentage = lateralPercentage, peatPercentage = peatPercentage, yellowPercentage = yellowPercentage)
+    return render_template("predict.html", prediction=prediction, img_path=img_path, 
+                           blackPercentage=blackPercentage, lateralPercentage=lateralPercentage, 
+                           peatPercentage=peatPercentage, yellowPercentage=yellowPercentage)
 
 
 #Setting AboutUs page app route
