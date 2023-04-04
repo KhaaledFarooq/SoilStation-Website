@@ -16,7 +16,7 @@ import hashlib
 import imghdr
 
 #intializing the flask app
-app  = Flask('Soil_Identifier',template_folder=r'C:\Users\hp\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\hp\Documents\SoilStation-Website\static')
+app  = Flask('Soil_Identifier',template_folder=r'C:\Users\sashr\OneDrive\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\sashr\OneDrive\Documents\SoilStation-Website\static')
 
 
 soilID = 0
@@ -38,7 +38,7 @@ mydb = mysql.connector.connect(
 classes = ["Black Soil","Laterite Soil","Peat Soil","Yellow Soil"]
 
 #Loading trained model
-model = load_model(r"C:\Users\hp\Documents\SoilStation-Website\SoilTypeIdentify.h5")
+model = load_model(r"C:\Users\sashr\OneDrive\Documents\SoilStation-Website\SoilTypeIdentify.h5")
 
 
 #Function to predict the soil type
@@ -126,7 +126,7 @@ def get_output():
             return render_template("predict.html", warn = "Invalid file type. Please upload a PNG, JPEG, JPG or JFIF image.")
 
         #Set path to save image
-        img_path1 = r"C:\Users\hp\Documents\SoilStation-Website\static\img"
+        img_path1 = r"C:\Users\sashr\OneDrive\Documents\SoilStation-Website\static\img"
         img_path2 = img.filename
         stat_dir = r"\static\img" #Flask static directory
 
