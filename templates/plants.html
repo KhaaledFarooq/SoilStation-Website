@@ -37,7 +37,7 @@
         border: 1px solid #dddddd;
         border-radius: 5px;
         box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.3);
-        width: 300px;
+        width: 400px;
       }
 
       .plant-image {
@@ -71,6 +71,14 @@
         text-align: center;
         color: #542525;
       }
+
+      h2 {
+        margin-top: 40px;
+        font-size: 40px;
+        position: static;
+        text-align: center;
+        color: black;
+      }
     </style>
   </head>
 
@@ -97,15 +105,19 @@
     </header>
     <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
     <h1>Plant Recommendations</h1>
-    <div class="plant-container">
-      {% for plant in plants %}
-      <div class="plant-card">
-        <img class="plant-image" src="{{ plant[1] }}" alt="{{ plant[0] }}" />
-        <div class="plant-name">{{ plant[0] }}</div>
-        <div class="plant-description">{{ plant[2] }}</div>
-        <div class="plant-treatment-methods">{{ plant[3] }}</div>
-      </div>
-      {% endfor %}
+{% for plant_type, plants in new_plants.items() %}
+<div class="plant-type"><h2>{{ plant_type }}</h2></div>
+<div class="plant-container">
+    {% for plant in plants %}
+    <div class="plant-card">
+        <img class="plant-image" src="{{ plant['image'] }}" alt="{{ plant['name'] }}" />
+        <div class="plant-name">{{ plant['name'] }}</div>
+        <div class="plant-description">{{ plant['description'] }}</div>
+        <div class="plant-treatment-methods">{{ plant['treatment_methods'] }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endfor %}
     </div>
 
     <!--footer section starts-->

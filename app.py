@@ -1,9 +1,12 @@
 #Importing Modules
 from flask import Flask, render_template, request, redirect
 import mysql.connector
+import tensorflow as tf
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from keras.utils import load_img, img_to_array
 from keras.models import load_model
 import numpy as np
+from tensorflow.keras.preprocessing import image
 import os
 import base64
 from io import BytesIO
@@ -16,15 +19,16 @@ import hashlib
 import imghdr
 
 #intializing the flask app
-app  = Flask('Soil_Identifier',template_folder=r'C:\Users\hp\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\hp\Documents\SoilStation-Website\static')
+app  = Flask('Soil_Identifier',template_folder=r'C:\Users\sashr\OneDrive\Documents\SoilStation-Website\templates', static_folder =r'C:\Users\sashr\OneDrive\Documents\SoilStation-Website\static')
 
-
+soil_check = True
 soilID = 0
 User = "defaultuser"
 loggedin = False
 predicted = False
 userid = 1
 current_date = datetime.date.today()
+soil_type = True
 
 #connecting to the database
 mydb = mysql.connector.connect(
@@ -38,7 +42,8 @@ mydb = mysql.connector.connect(
 classes = ["Black Soil","Laterite Soil","Peat Soil","Yellow Soil"]
 
 #Loading trained model
-model = load_model(r"C:\Users\hp\Documents\SoilStation-Website\SoilTypeIdentify.h5")
+model1 = load_model(r"C:\Users\sashr\OneDrive\Documents\SoilStation-Website\soil_model.h5")
+model2 = load_model(r"C:\Users\sashr\OneDrive\Documents\SoilStation-Website\SoilTypeIdentify.h5")
 
 
 #Function to predict the soil type
@@ -51,7 +56,7 @@ def predict(file):
     image = (image/255.) #Rescaling
     
 	#predicting
-    preds = model.predict(image) #return array with probabilities for each class
+    preds = model2.predict(image) #return array with probabilities for each class
     predsLabel = np.argmax(preds) #return the class with highest probability
     global soilID 
     soilID = int(predsLabel)+1
@@ -79,6 +84,22 @@ def predict(file):
     
 	#Return predicted class and percentages as a tuple
     return prediction, num0, num1, num2, num3
+
+#Function to predict the soil type
+def predict2(file):
+    img = image.load_img(file, target_size=(220, 220))
+    img = image.img_to_array(img)
+    img = np.expand_dims(img, axis=0)
+    preds1 = model1.predict(img)
+    # pred = np.argmax(preds1) 
+    # print("The prediction is ",pred)
+    global soil_type
+    
+    if preds1 < 0.5:
+        soil_type = False
+    else :
+        soil_type = True    
+
 
 
 #Setting starting app route
@@ -124,15 +145,21 @@ def get_output():
         # Check if the file is an image
         if not imghdr.what(img) in {'png', 'jpeg', 'jpg', 'jfif'}:
             return render_template("predict.html", warn = "Invalid file type. Please upload a PNG, JPEG, JPG or JFIF image.")
-
+        
         #Set path to save image
-        img_path1 = r"C:\Users\hp\Documents\SoilStation-Website\static\img"
+        img_path1 = r"C:\Users\sashr\OneDrive\Documents\SoilStation-Website\static\img"
         img_path2 = img.filename
         stat_dir = r"\static\img" #Flask static directory
 
         #Path to save image
         img_path = os.path.join(img_path1+"\\"+img_path2)    
         img.save(img_path)
+
+        predict2(img_path)
+
+        global soil_type
+        if not soil_type:
+            return render_template("predict.html", warning = "Uploaded image is not soil. Please upload an image of a soil sample.")
 
         #Predicting the given image
         results = predict(img_path)
@@ -148,8 +175,9 @@ def get_output():
         yellowPercentage = ("{:.2f}".format(results[4])+" %") #Yellow percentage
 
     return render_template("predict.html", prediction=prediction, img_path=img_path, 
-                           blackPercentage=blackPercentage, lateralPercentage=lateralPercentage, 
-                           peatPercentage=peatPercentage, yellowPercentage=yellowPercentage)
+                        blackPercentage=blackPercentage, lateralPercentage=lateralPercentage, 
+                        peatPercentage=peatPercentage, yellowPercentage=yellowPercentage)
+            
 
 
 #Setting AboutUs page app route
@@ -284,20 +312,25 @@ def plantRecommend():
     if loggedin:
         if predicted:
             mycursor = mydb.cursor()
-            mycursor.execute('SELECT Plant_Name, Image, Description, Treatment_Methods FROM plants WHERE Soil_ID = %s',(soilID,))
+            mycursor.execute('SELECT Plant_Name, Image, Description, Treatment_Methods, Plant_Type FROM plants WHERE Soil_ID = %s ORDER BY Plant_Type, Plant_Name', (soilID,))
             plants = mycursor.fetchall()
             
             # Convert BLOB images to PNG format and base64-encoded data URIs
-            new_plants = []
+            new_plants = {}
             for plant in plants:
                 img = Image.open(BytesIO(plant[1]))
                 buffer = BytesIO()
                 img.save(buffer, format='PNG')
                 img_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
                 img_data_uri = f"data:image/png;base64,{img_str}"
-                new_plants.append((plant[0], img_data_uri, plant[2], plant[3]))
+                plant_dict = {'name': plant[0], 'image': img_data_uri, 'description': plant[2], 'treatment_methods': plant[3]}
+                plant_type = plant[4]
+                if plant_type in new_plants:
+                    new_plants[plant_type].append(plant_dict)
+                else:
+                    new_plants[plant_type] = [plant_dict]
             
-            return render_template('plants.html', plants=new_plants)
+            return render_template('plants.html', new_plants=new_plants)
         else:
             return render_template("predict.html")
     else:
